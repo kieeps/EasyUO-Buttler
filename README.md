@@ -1,2 +1,2 @@
-# EasyuUO-Buttler
+# EasyUO-Buttler
 The Buttler Repo
