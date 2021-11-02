@@ -2,7 +2,7 @@ call Settings.txt
 call RunOnce.txt
 gosub openBags
 gosub openChests
-event sysmessage Operating...
+event sysmessage Operating....
 
 
 main:
@@ -279,7 +279,7 @@ for %loopscan %iloop1 %iloop2
 						{
 						msg -macro empty$
 						wait 2s
-						msg K‰nn pÂ Herrens j‰ttepung!$
+						msg K√§nn p√• Herrens j√§ttepung!$
 						set #LOBJECTID #FINDID
 						set #LOBJECTTYPE #FINDTYPE
 						event macro 17 0
