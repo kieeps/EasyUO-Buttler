@@ -1,0 +1,9 @@
+gosub %1
+exit
+
+sub spiritSpeak
+event macro 13 32
+return
+
+
+

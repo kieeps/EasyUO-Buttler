@@ -1,0 +1,30 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Start of Config Section ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+set %inputchest CAHEEAE
+set %outputchest LSGEEAE
+set %regsbag WKTIAAE
+set %dressbag EKNXCND
+set %spellbook VDBJXMD
+set %ebookID IZBRZND
+set %lowRegLimit 200
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Macro Settings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; %macro 0 Disabled
+; %macro 1 Scribe
+; %macro 2 Magery
+; %macro 3 Alchemy
+; %macro 4 SS
+; %macro 5 Meditate
+; %macro 6 Eval Int
+set %macro 0
+set %delay 15000
+set %mediDelay 30000
+set %ssDelay 150000
+set %selfbuff false
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Timer Settings ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+set %idle #SYSTIME + %delay
+set %sstimer #systime
+set %mediTimer #systime
+set %nagtimer #systime
+set %skillTimer #systime
+set %scribetimer #systime
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; End of Config Section   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

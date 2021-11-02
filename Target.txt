@@ -1,0 +1,60 @@
+gosub %1
+exit
+
+sub Self
+if #TARGCURS = 1
+	{
+	repeat
+		{
+		event macro 23 0
+		}
+	until #TARGCURS = 0
+	}
+return
+
+sub Target
+if #TARGCURS = 1
+	{
+	repeat
+		{
+		event macro 22 0
+		}
+	until #TARGCURS = 0
+	}
+return
+
+sub Get
+set %tr 0
+str pos %rawSpeaker :
+set %cut #STRRES - 1
+str left %rawSpeaker %cut
+set %speaker #STRRES
+repeat
+{
+str Pos %speaker _
+str Ins %speaker #spc #strRes
+set %speaker #strRes
+str Pos %speaker _
+str Del %speaker #strRes 1
+set %speaker #strRes
+}
+until _ notIn %speaker
+repeat
+    {
+     event macro 50 5
+     event macro 13 3
+     target
+     event macro 22
+     wait 3
+     event Property #LTARGETID
+	   set %tr %tr + 1
+     }
+until %Speaker in #property && Merchant notIn #Property || %tr >= 20
+if %tr >= 20
+   {
+    event sysmessage Cant find target
+    goto notarget
+   }
+event sysmessage %tr
+set %rawSpeaker
+return

@@ -1,0 +1,143 @@
+gosub %1
+gosub target_ , %2
+exit
+
+sub nightsight
+repeat
+	{
+	wait 5
+	event macro 15 5
+	target 2s
+	}
+until #TARGCURS = 1
+return
+
+sub greaterHeal
+repeat
+	{
+	wait 5
+	event macro 15 28
+	target 2s
+	}
+until #TARGCURS = 1
+return
+
+sub bless
+repeat
+	{
+	wait 5
+	event macro 15 16
+	target 2s
+	}
+until #TARGCURS = 1
+return
+
+sub cunning
+repeat
+	{
+	wait 5
+	event macro 15 9
+	target 2s
+	}
+until #TARGCURS = 1
+return
+
+sub agility
+repeat
+	{
+	wait 5
+	event macro 15 8
+	target 2s
+	}
+until #TARGCURS = 1
+return
+
+sub strength
+repeat
+	{
+	wait 5
+	event macro 15 15
+	target 2s
+	}
+until #TARGCURS = 1
+return
+
+sub archProtection
+repeat
+	{
+	wait 5
+	event macro 15 25
+	target 2s
+	}
+until #TARGCURS = 1
+return
+
+sub cure
+repeat
+	{
+	wait 5
+	event macro 15 10
+	target 2s
+	}
+until #TARGCURS = 1
+return
+
+sub dispel
+repeat
+	{
+	wait 5
+	event macro 15 40
+	target 2s
+	}
+until #TARGCURS = 1
+return
+
+sub ressurection
+repeat
+	{
+	wait 5
+	event macro 15 58
+	target 2s
+	}
+until #TARGCURS = 1
+return
+
+sub polymorph
+wait 5
+event macro 15 55
+return
+
+sub target_Self
+if #TARGCURS = 1
+	{
+	repeat
+		{
+		event macro 23 0
+		}
+	until #TARGCURS = 0
+	}
+return
+
+sub target_Target
+if #TARGCURS = 1
+	{
+	repeat
+		{
+		event macro 22 0
+		}
+	until #TARGCURS = 0
+	}
+return
+
+sub target_tile
+if #TARGCURS = 1
+	{
+	repeat
+		{
+		click 389 349 dmc
+		wait 10
+		}
+	until #TARGCURS = 0
+	}
+return
+

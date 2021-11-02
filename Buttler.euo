@@ -1,0 +1,766 @@
+call Settings.txt
+call RunOnce.txt
+gosub openBags
+gosub openChests
+event sysmessage Operating...
+
+
+main:
+gosub manaCheck
+gosub scanJournal
+gosub macros
+gosub selfBuff
+goto main
+
+
+sub scanJournal
+set %iloop2 #jindex
+for %loopscan %iloop1 %iloop2
+	{
+	scanjournal %loopscan
+	if $ in #journal ;; Look for command
+		{
+		if $id in #journal ;; Item ID
+			{
+			msg -macro empty$
+			msg Idientifying The Left Chest.$
+			set #LOBJECTID %inputchest ; Make sure the Left Chest is open
+			event macro 17 0
+			wait 10
+			set #LOBJECTID %outputchest ; Make sure the right Chest is open
+			event macro 17 0
+			wait 10
+			scanjournal 1
+			Gosub id
+			msg All done!$
+			ignoreitem reset 1
+			set %idle #SYSTIME + %delay
+			}
+               
+		if $light in #journal ;; Cast Night Sight
+			{
+			msg -macro empty$
+			set %rawSpeaker #journal
+			call regsCheck.txt warn
+			if %sulphurousAsh > 0
+				{
+				call Target.txt Get
+				msg Let There Be Light$
+				call Spellbook.txt nightsight traget
+				}
+				else
+				{
+				msg sorry, not enough regs$
+				}
+			set %idle #SYSTIME + %delay
+			}
+		if $buff in #journal ;; Cast Bless, Cunning, Streangth, Agility, Protection
+			{
+			msg -macro empty$
+			set %rawSpeaker #journal
+			call regsCheck.txt warn
+			if %mandrakeRoots >= 5 && %nightShade >= 2 && %garlic >= 2 && %bloodMoss >= 1 && %ginseng >= 1 && %sulphurousAsh >= 1
+				{
+				if #mana < 65
+					{
+					gosub meditate
+					}
+                    call Target.txt Get
+                    msg Buffin' up!$
+                    call Spellbook.txt cunning target
+                    call Spellbook.txt strength target
+                    call Spellbook.txt agility target
+                    wait 10
+                    finditem %seraphimID C_ , #BACKPACKID
+                    if #FINDCNT > 0
+						{
+						wait 10
+                        set #LOBJECTID %seraphimID
+                        event macro 17
+                        wait 40
+						}
+						else
+						{
+						call Spellbook.txt bless target
+						call Spellbook.txt archProtection target
+						}
+					call Spellbook.txt greaterHeal target
+					}
+					else
+					{
+					msg sorry, not enough regs$
+					}
+				notarget:
+				set %idle #SYSTIME + %delay
+				}
+		if $heal in #journal ;; Cast Gearer Heal
+			{
+			msg -macro empty$
+			set %rawSpeaker #journal
+			call regsCheck.txt warn
+			if %garlic > 0 && %ginseng > 0 && %mandrakeRoots > 0 && %spiderSilk > 0
+				{
+				call Target.txt Get
+				msg Healing$
+				call Spellbook.txt greaterHeal target
+				}
+				else
+				{
+				msg sorry, not enough regs$
+				}
+            set %idle #SYSTIME + %delay
+            }
+		if $cure in #journal ;; Cast Cure
+			{
+			msg -macro empty$
+			set %rawSpeaker #journal
+			call regsCheck.txt warn
+			if %garlic > 0 && %ginseng > 0
+				{
+				call Target.txt Get
+				msg Curing$
+				call Spellbook.txt cure target
+				}
+				else
+				{
+				msg sorry, not enough regs$
+				}
+			set %idle #SYSTIME + %delay
+			}
+		if $dispel in #journal ;; Cast Dispel
+			{
+			msg -macro empty$
+			set %rawSpeaker #journal
+			call regsCheck.txt warn
+			if %garlic > 0 && %mandrakeRoots > 0 && %sulphurousAsh > 0
+				{
+				call Target.txt Get
+				msg Dispeling$
+				call Spellbook.txt dispel target
+				}
+				else
+				{
+				msg sorry, not enough regs$
+				}
+			set %idle #SYSTIME + %delay
+			}
+		if [O] in #journal && :_$ress in #journal ; listen to Guild chat only and cast ress
+			{
+			msg -macro empty$
+			set %rawSpeaker #journal
+			call regsCheck.txt warn
+			if %bloodMoss > 0 && %garlic > 0 && %ginseng > 0
+				{
+				call Target.txt Get
+				msg i Hang in there! $
+				call Spellbook.txt Ressurection target
+				}
+				else
+				{
+				msg sorry, not enough regs$
+				}
+			set %idle #SYSTIME + %delay
+			}
+		if $circle in #journal ;; Check Circle on casterWep
+			{
+			msg -macro empty$
+			msg I'll have a lookze! $
+			set #LOBJECTID %inputchest
+			event macro 17 0
+			wait 10
+			set #LOBJECTID %outputchest
+			event macro 17 0
+			wait 10
+			scanjournal 1
+			gosub getCircle
+			set %idle #SYSTIME + %delay
+			}
+		if $poison in #journal || $psn in #journal ;; Check level on PoisonWep
+			{
+			msg -macro empty$
+			msg I'll take a look $
+			set #LOBJECTID %inputchest
+			event macro 17 0
+			wait 10
+			set #LOBJECTID %outputchest
+			event macro 17 0
+			wait 10
+			scanjournal 1
+			gosub getPoison
+			set %idle #SYSTIME + %delay
+			}
+		if $restock in #journal || $resuply in #journal ;; Restock
+			{
+			msg Thanks!$
+			msg -macro restock$
+			msg -macro restockpagans$
+			set %idle #SYSTIME + %delay
+			}
+		if $tamlas in #journal
+			{
+			msg -macro tamlas2$
+			msg Making Tamlas tell me when to stop$
+			set %idle #SYSTIME + %delay
+			}
+		if $mage in #journal
+			{
+			msg -macro Mage$
+			msg Making Grand Mage Refresh tell me when to stop$
+			set %idle #SYSTIME + %delay
+			}
+		if $refresh in #journal
+			{
+			msg -macro Refresh$
+			msg Making Full Refresh tell me when to stop$
+			set %idle #SYSTIME + %delay
+			}
+		if $taints in #journal
+			{
+			msg -macro taints$
+			msg Making Taints Major Transmutation tell me when to stop$
+			set %idle #SYSTIME + %delay
+			}
+		if $GE in #journal
+			{
+			msg -macro GE$
+			msg Making Greater Explosion Potions tell me when to stop$
+			set %idle #SYSTIME + %delay
+			}
+		if $recalls in #journal
+			{
+			msg -macro recalls$
+			msg Making Recall scrolls tell me when to stop$
+			set %idle #SYSTIME + %delay
+			}
+		if $stop in #journal
+			{
+			msg -macro empty$
+			msg Stopping$
+			set %idle #SYSTIME + %delay
+			}
+		if $reags in #journal ;; Regs
+			{
+			call regsCheck.txt
+			event Macro 1 0 Black Perls:    %blackPerl
+			event Macro 1 0 Blood Moss:     %bloodMoss
+			event Macro 1 0 Garlic:         %garlic
+			event Macro 1 0 Ginseng:        %ginseng
+			event Macro 1 0 Mandrake Roots: %mandrakeRoots
+			event Macro 1 0 Nightshade:     %nightShade
+			event Macro 1 0 Spider Silk:    %spiderSilk
+			event Macro 1 0 Sulphurous Ash: %sulphurousAsh
+			}
+		if $nag in #journal
+			{
+			if [O] in #journal || [A] in #journal
+				{
+				if #SYSTIME < %nagtimer
+					{
+					set %msleft %nagtimer - #systime
+					set %sleft ( %msleft / 1000 )
+					set %mleft ( %sleft / 60 )
+					msg .co The staff will be ready in %mleft minutes again.$
+					scanjournal 1
+					wait 2s
+					}
+					else
+					{
+					msg .co Staff is ready to buff.$
+					scanjournal 1
+					wait 2s
+					}
+				}
+				else
+				{
+				if #SYSTIME > %nagtimer
+					{
+					finditem PMH C_ , #CHARID
+					if #FINDCNT > 0
+						{
+						msg -macro empty$
+						wait 2s
+						msg Känn på Herrens jättepung!$
+						set #LOBJECTID #FINDID
+						set #LOBJECTTYPE #FINDTYPE
+						event macro 17 0
+						wait 2s
+						set %nagtimer #SYSTIME + 1800000
+						}
+						else
+						{
+						msg Hmmmm.... I'w seem to have lost my staff...$
+						}
+					}
+					else
+					{
+					set %msleft %nagtimer - #systime
+					set %sleft ( %msleft / 1000 )
+					set %mleft ( %sleft / 60 )
+					msg The staff will be ready in %mleft minutes again.$
+					scanjournal 1
+					wait 1s
+					}
+				}
+			}
+		}
+	}
+set %iloop1 #jindex
+return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Action Section ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+sub selfBuff
+if #maxmana < 290 && %selfbuff = true
+	{
+	call regsCheck.txt warn
+	if %mandrakeRoots >= 5 && %nightShade >= 2 && %garlic >= 2 && %bloodMoss >= 1 && %ginseng >= 1 && %sulphurousAsh >= 1
+		{
+		call Spellbook.txt cunning self
+		call Spellbook.txt strength self
+		call Spellbook.txt agility self
+		call Spellbook.txt bless self
+		call Spellbook.txt archProtection tile
+		call Spellbook.txt polymorph
+		}
+	set %idle #SYSTIME + %delay
+	}
+return
+
+sub getCircle
+wait 10s
+for %loop 1 2
+	{
+	ignoreitem reset 1
+	finditem * C_ , %inputchest ; Look for any item in Left chest
+	event sysmessage #findcnt
+	if #findcnt > 0
+		{
+		set #LTARGETID #FINDID
+		event Macro 13 3 ; use ItemID
+		target 5s
+		set %jgc1
+		event Macro 22 0 ; Use on Item Found
+		wait 1s
+		set %jgc2
+		for %igc %jgc1 %jgc2 ; Scan all lines in #journal for "Chanse"
+			{
+			scanJournal %igc
+			if Chance in #journal ; if "Chanse is found, save an array of that line and the 2 above"
+				{
+				set %jline1 #jindex - 2
+				set %jline2 #jindex - 1
+				set %jline3 #jindex
+				scanjournal %jline1
+				set %line1 #journal
+				scanjournal %jline2
+				set %line2 #journal
+				scanjournal %jline3
+				set %line3 #journal
+				Exevent Drag #findid #findstack
+				wait 10
+				Exevent Dropc %outputchest
+				wait 10
+				set %loop 1
+				str Len %line1
+				set %Line1Length #strRes
+				set %RLine1Length %Line1Length - 17 ; Remove Bloated message
+				str Right %line1 %RLine1Length
+				set %Rline1 #strRes
+				repeat ; Remove Underscore and replace with Spaces in line 1
+					{
+					str Pos %Rline1 _
+					str Ins %Rline1 #spc #strRes
+					set %Rline1 #strRes
+					str Pos %Rline1 _
+					str Del %Rline1 #strRes 1
+					set %Rline1 #strRes
+					}
+				until _ notIn %Rline1
+				repeat ; Remove Underscore and replace with Spaces in line 2
+					{
+					str Pos %line2 _
+					str Ins %line2 #spc #strRes
+					set %line2 #strRes
+					str Pos %line2 _
+					str Del %line2 #strRes 1
+					set %Rline2 #strRes
+					}
+				until _ notIn %Rline2
+				repeat ; Remove Underscore and replace with Spaces in line 3
+					{
+					str Pos %line3 _
+					str Ins %line3 #spc #strRes
+					set %line3 #strRes
+					str Pos %line3 _
+					str Del %line3 #strRes 1
+					set %Rline3 #strRes
+					}
+				until _ notIn %Rline3
+				event Macro 1 0 %Rline1 ; Output the refined lines
+				event Macro 1 0 %Rline2 ; without the bloated "it apears to be"
+				event Macro 1 0 %Rline3 ; and no underscores
+				}
+			}
+		}
+		set %loop 3
+	}
+return
+
+sub getPoison
+for %loop 1 2
+	{
+	ignoreitem reset 1
+	finditem * C_ , %inputchest ; Look for any item in Left chest
+	if #findcnt > 0
+		{
+		set #LTARGETID #FINDID
+		event Macro 13 3 ; Use ItemID
+		target 5s
+		set %jgp1
+		event Macro 22 0 ; On item found
+		wait 10
+		set %jgp2
+		for %igp %jgp1 %jgp2 ; Scan all lines in #journal for "level"
+			{
+			scanJournal %igp
+			if level in #journal ; if "level" is found, save that line as %jline
+				{
+				set %jline #jindex
+				scanjournal %jline
+				set %line #journal
+				Exevent Drag #findid #findstack
+				wait 10
+				Exevent Dropc %outputchest
+				wait 10
+				set %loop 1
+				set %RLine %line
+				repeat ; Remove underscore and replace with spaces
+					{
+					str Pos %Rline _
+					str Ins %Rline #spc #strRes
+					set %Rline #strRes
+					str Pos %Rline _
+					str Del %Rline #strRes 1
+					set %Rline #strRes
+					}
+				until _ notIn %Rline
+				str del %RLine 1 4
+				set %RLine #strRes
+				event Macro 1 0 %Rline  ; output the refined line
+				}
+			}
+		}
+		set %loop 3
+	}
+return
+
+
+sub openBags
+; Open Backpack
+event Macro 8 7
+wait 10
+set #CONTPOSX 791
+wait 5
+set #CONTPOSY 282
+; Open RegsBag
+set #LOBJECTID %regsBag
+wait 10
+event macro 17 0
+wait 10
+set #CONTPOSX 823
+wait 5
+set #CONTPOSY 481
+return
+
+sub openChests
+; Open InputChest
+set #LOBJECTID %outputchest
+wait 10
+event macro 17 0
+wait 10
+set #CONTPOSX 11
+wait 5
+set #CONTPOSY 649
+;  Open OutputChest
+
+set #LOBJECTID %inputchest
+wait 10
+event macro 17 0
+wait 10
+set #CONTPOSX 214
+wait 5
+set #CONTPOSY 649
+return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Macros Section ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+sub macros
+if #SYSTIME > %idle
+	{
+	if %macro = 0
+		{
+		return
+		}
+	if %macro = 1
+		{
+		gosub macroScribe
+		}
+	if %macro = 2
+		{
+		gosub macroMagery
+		}
+	if %macro = 3
+		{
+		gosub macroAlchemy
+		}
+	if %macro = 4
+		{
+		gosub macroSpiritSpeak
+		}
+	if %macro = 5
+		{
+		gosub macroMeditate
+		}
+	if %macro = 6
+		{
+		gosub macroEvalInt
+		}
+	}
+return
+
+sub macroScribe
+if #SYSTIME > %scribetimer
+	{
+	set %macroing true
+	finditem MMF C_ , #BackpackID
+	if #mana < 4 0
+		{
+		gosub meditate
+		}
+	if #findcnt > 0
+		{
+;		msg -macro grandfeast$
+;		set %scribetimer #systime + 133000
+;		msg -macro scribing$
+;		msg -macro scribemacro$
+;		msg -macro medi$
+;		set %scribetimer #systime + 30000
+;  	msg -macro tamlas2$
+		msg -macro recalls$
+		set %scribetimer #systime + 12000
+		set %macroing false
+		}
+		else
+		{
+		set %macro 6
+		}
+	}
+return
+
+sub macroMagery
+gosub dressMacroMagery
+set %macroing true
+finditem CYL C_ , #BackPackID
+if #findcnt > 0
+	{
+	set #LOBJECTID #findid
+	set #LOBJECTTYPE #findtype
+	event Macro 17 0
+	target
+	if #TARGCURS = 1
+		{
+		repeat
+			{
+			key ESC
+			}
+		until #TARGCURS = 0
+		return
+		}
+		else
+		{
+		set %macroing false
+		return
+		}
+	}
+	else
+	{
+	set %macro 0
+	}
+return
+
+sub macroAlchemy
+finditem SZF C_ , #BACKPACKID
+if #FINDSTACK > 100
+	{
+	msg -macro GE$
+	set %idle #systime + %delay
+	wait 7s
+	}
+return
+
+sub macroSpiritSpeak
+if #systime > %sstimer
+	{
+	set %selfbuff false
+	event macro 13 32
+;	call Spellbook.txt dispel self
+	set %sstimer #systime + 120000
+	}
+return
+
+sub macroMeditate
+if #systime > %mediTimer
+	{
+	msg -macro Buttler\Macro\Meditate$
+	set %idle #systime + %delay
+	set %mediTimer #systime + %mediDelay
+	}
+return
+
+sub macroEvalInt
+if #systime > %skillTimer
+	{
+ msg -macro Eval $
+	set %idle #systime + %delay
+	set %skillTimer #systime + 9000
+	}
+return
+    
+
+sub closePicker
+if #CONTNAME = objpicker_gump
+	{
+	click 6 31 r
+	wait 10
+	}
+return
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Skill Section ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+sub id
+finditem LKF_ZJF_CKF C_ , %inputchest
+if #findcnt > 0
+	{
+	set %idcontainer #findid
+	set #LOBJECTID #findid
+	set #LOBJECTTYPE #findtype
+	event macro 17 0
+	wait 1s
+	set %ignoredone _
+	gosub idbag
+	}
+	else
+	{
+	gosub idchest
+	}
+return
+
+sub idbag
+msg Starting with bag$
+for %loopbag 1 2
+	{
+	ignoreitem reset 1
+	ignoreitem %ignoredone 1
+	finditem * C_ , %idcontainer
+	if #findcnt > 0
+		{
+		set #LTARGETID #FINDID
+		set #LTARGETKIND 1
+		event Macro 13 3
+		target 5s
+		set %jfb1
+		event Macro 22 0
+		set %jfb2
+		set %jfailcheckbag %jfb2 - %jfb1
+		scanjournal %jfailcheckbag
+		if not_sure in #journal
+			{
+			set %loopbag 1
+			}
+			else
+			{
+			set %ignoredone %ignoredone , #findid , _
+			set %loopbag 1
+			}
+		}
+		else
+		{
+		Exevent Drag %idcontainer 1
+		wait 10
+		Exevent Dropc %outputchest
+		set %loopbag 3
+		msg Bag done.$
+		gosub id
+		}
+	}
+return
+
+sub idchest
+for %loop 1 2
+	{
+	finditem * C_ , %inputchest
+	if #findcnt > 0
+		{
+		set #LTARGETID #FINDID
+		event Macro 13 3
+		target 5s
+		set %jf1
+		event Macro 22 0
+		set %jf2
+		set %jfailcheck %jf2 - %jf1
+		scanjournal %jfailcheck
+		if not_sure in #journal
+			{
+			set %loop 1
+			}
+			else
+			{
+			Exevent Drag #findid #findstack
+			wait 10
+			Exevent Dropc %outputchest
+			wait 10
+			set %loop 1
+			}
+		}
+		else
+		{
+		set %loop 3
+		}
+	}
+return
+
+sub manaCheck
+if #mana < 70
+	{
+	gosub meditate
+	}
+return
+
+sub meditate
+set %med1 #jindex
+set %idle #SYSTIME + %delay
+event Macro 13 46
+wait 10
+set %med2 #jindex
+for %imed %med1 %med2
+	{
+	scanjournal %imed
+	if you_enter_a_meditative_trance in #journal
+		{
+		set %meditate true
+		repeat
+			{
+			scanjournal 1
+			if $ in #journal
+				{
+				event Macro 2 0 Meditating
+				event Macro 2 0 #mana out of #maxmana
+				scanjournal 1
+				wait 1s
+				}
+			}
+		until #mana = #maxmana
+		set %meditate false
+		}
+	}
+return
+

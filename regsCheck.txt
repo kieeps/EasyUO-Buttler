@@ -1,0 +1,207 @@
+set #NEXTCPOSX 887
+set #NEXTCPOSY 435
+set #LOBJECTID %regsBag
+event macro 17 0
+wait 10
+
+finditem KUF C_ , %regsbag
+set %ignore _
+set %blackPerl 0
+for %ibp 1 #findcnt
+    {
+    ignoreitem reset 1
+    ignoreitem %ignore 1
+    finditem KUF C_ , %regsbag
+    set %blackPerl %blackPerl + #FINDSTACK
+    set %ignore %ignore , #findid , _
+    }
+
+finditem JUF C_ , %regsBag
+set %ignore _
+set %bloodMoss 0
+for %ibp 1 #findcnt
+    {
+    ignoreitem reset 1
+    ignoreitem %ignore 1
+    finditem JUF C_ , %regsbag
+    set %bloodMoss %bloodMoss + #FINDSTACK
+    set %ignore %ignore , #findid , _
+    }
+
+finditem KZF C_ , %regsBag
+set %ignore _
+set %garlic 0
+for %ibp 1 #findcnt
+    {
+    ignoreitem reset 1
+    ignoreitem %ignore 1
+    finditem KZF C_ , %regsbag
+    set %garlic %garlic + #FINDSTACK
+    set %ignore %ignore , #findid , _
+    }
+
+finditem JZF C_ , %regsBag
+set %ignore _
+set %ginseng 0
+for %ibp 1 #findcnt
+    {
+    ignoreitem reset 1
+    ignoreitem %ignore 1
+    finditem JZF C_ , %regsbag
+    set %ginseng %ginseng + #FINDSTACK
+    set %ignore %ignore , #findid , _
+    }
+
+finditem MZF C_ , %regsBag
+set %ignore _
+set %mandrakeRoots 0
+for %ibp 1 #findcnt
+    {
+    ignoreitem reset 1
+    ignoreitem %ignore 1
+    finditem MZF C_ , %regsbag
+    set %mandrakeRoots %mandrakeRoots + #FINDSTACK
+    set %ignore %ignore , #findid , _
+    }
+
+finditem WZF C_ , %regsBag
+set %ignore _
+set %nightShade 0
+for %ibp 1 #findcnt
+    {
+    ignoreitem reset 1
+    ignoreitem %ignore 1
+    finditem WZF C_ , %regsbag
+    set %nightShade %nightShade + #FINDSTACK
+    set %ignore %ignore , #findid , _
+    }
+
+finditem RZF C_ , %regsBag
+set %ignore _
+set %spiderSilk 0
+for %ibp 1 #findcnt
+    {
+    ignoreitem reset 1
+    ignoreitem %ignore 1
+    finditem RZF C_ , %regsbag
+    set %spiderSilk %spiderSilk + #FINDSTACK
+    set %ignore %ignore , #findid , _
+    }
+
+finditem SZF C_ , %regsBag
+set %ignore _
+set %sulphurousAsh 0
+for %ibp 1 #findcnt
+    {
+    ignoreitem reset 1
+    ignoreitem %ignore 1
+    finditem SZF C_ , %regsbag
+    set %sulphurousAsh %sulphurousAsh + #FINDSTACK
+    set %ignore %ignore , #findid , _
+    }
+    
+if %1 = warn
+   {
+    if %blackPerl < %lowRegLimit
+       {
+        set %blackPerlLow true
+       }
+       else
+       {
+        set %blackPerlLow false
+       }
+    if %bloodMoss < %lowRegLimit
+       {
+        set %bloodMossLow true
+       }
+       else
+       {
+        set %bloodMossLow false
+       }
+    if %garlic < %lowRegLimit
+       {
+        set %garlicLow true
+       }
+       else
+       {
+        set %garlicLow false
+       }
+    if %ginseng < %lowRegLimit
+       {
+        set %ginsengLow true
+       }
+       else
+       {
+        set %ginsengLow false
+       }
+    if %mandrakeRoots < %lowRegLimit
+       {
+        set %mandrakeRootsLow true
+       }
+       else
+       {
+        set %mandrakeRootsLow false
+       }
+    if %nightShade < %lowRegLimit
+       {
+        set %nightShadeLow true
+       }
+       else
+       {
+        set %nightShadeLow false
+       }
+    if %spiderSilk < %lowRegLimit
+       {
+        set %spiderSilkLow true
+       }
+       else
+       {
+        set %spiderSilkLow false
+       }
+    if %sulphurousAsh < %lowRegLimit
+       {
+        set %sulphurousAshLow true
+       }
+       else
+       {
+        set %sulphurousAshLow false
+       }
+set %lowRegs #spc
+if %blackPerlLow = true || %bloodMossLow = true || %garlicLow = true || %ginsengLow = true || %mandrakeRootsLow = true || %nightShadeLow = true || %spiderSilkLow = true || %sulphurousAshLow = true
+   {
+    if %blackPerlLow = true
+       {
+        set %lowRegs %lowRegs , #spc , Black , #spc , Perls , #dot
+       }
+    if %bloodMossLow = true
+       {
+        set %lowRegs %lowRegs , #spc , Blood , #spc , Moss , #dot
+       }
+    if %garlicLow = true
+       {
+        set %lowRegs %lowRegs , #spc , Garlic , #dot
+       }
+    if %ginsengLow = true
+       {
+        set %lowRegs %lowRegs , #spc , Ginseng , #dot
+       }
+    if %mandrakeRootsLow = true
+       {
+        set %lowRegs %lowRegs , #spc , Mandrake , #spc , Roots , #dot
+       }
+    if %nightShadeLow = true
+       {
+        set %lowRegs %lowRegs , #spc , NightShades , #dot
+       }
+    if %spiderSilkLow = true
+       {
+        set %lowRegs %lowRegs , #spc , Spiders , #spc , Silks , #dot
+       }
+    if %sulphurousAshLow = true
+       {
+        set %lowRegs %lowRegs , #spc , Sulphurous , #spc , Ash , #dot
+       }
+    msg Running low on , %lowRegs $
+    }
+}
+exit

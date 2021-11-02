@@ -1,0 +1,34 @@
+set #LTARGETKIND 1
+savePix 369 273 1
+repeat
+      {
+       event macro 56
+       scanjournal 1
+       wait 1s
+      }
+until New_Targeting_System_On in #journal
+display yesno Set Use Holy Buff?
+if #dispRes = yes
+   {
+    set %seraphim 1
+    set #TARGCURS 1
+    wait 2s
+    event sysmessage Target the Scrolls
+    if #TARGCURS = 1
+	     {
+        repeat
+              {
+		           event macro 22 0
+               }
+        until #TARGCURS = 0
+      }
+    set %seraphimID #LTARGETID
+   }
+   else
+   {
+    %seraphim 0
+    set %seraphimID 0
+   }
+event sysmessage done
+exit
+
